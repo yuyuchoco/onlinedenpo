@@ -4,24 +4,32 @@
 
 ## 公開方法
 
-このプロジェクトはビルド不要の静的サイトなので、GitHub Pages で公開する方法を採用しています。
+このプロジェクトはビルド不要の静的サイトなので、`gaip.jp` サーバーへ静的ファイルをそのまま配置して公開します。
 
-- GitHub リポジトリ: https://github.com/yuyuchoco/onlinedenpo
-- 公開 URL: https://yuyuchoco.github.io/onlinedenpo/
+- 公開 URL: https://gaip.jp/onlinedenpo/idou_maki/
+- SSH 接続: `ssh root@gaip.jp -p 8022`
+- 配置先: `/var/www/gaip.jp/onlinedenpo/idou_maki/`
 
 ### 手順
 
-1. GitHub に `onlinedenpo` リポジトリを作成する。
-2. このディレクトリを `main` ブランチの内容として push する。
-3. GitHub Pages を `Deploy from a branch` / `main` / `/(root)` で有効化する。
-4. 公開 URL `https://yuyuchoco.github.io/onlinedenpo/` を確認する。
+1. SSH で `root@gaip.jp:8022` に接続する。
+2. 配置先ディレクトリ `/var/www/gaip.jp/onlinedenpo/idou_maki/` を作成する。
+3. このディレクトリ内の公開用ファイルを `rsync` で同期する。
+4. `https://gaip.jp/onlinedenpo/idou_maki/` が `200 OK` を返すことを確認する。
 
 ### 更新方法
 
 ```bash
-git add .
-git commit -m "Update site"
-git push origin main
+rsync -av --delete -e 'ssh -p 8022' \
+  --exclude '.git/' \
+  --exclude '.gitignore' \
+  --exclude '.DS_Store' \
+  --exclude '.vscode/' \
+  --exclude 'README.md' \
+  --exclude 'SPEC.md' \
+  --exclude 'washi copy.jpg' \
+  --exclude 'makihiroki.jpg_.jpg' \
+  ./ root@gaip.jp:/var/www/gaip.jp/onlinedenpo/idou_maki/
 ```
 
-公開後は、必要に応じて HTML/CSS/JS のクエリ文字列を更新してキャッシュを切り替えます。
+同期後は、必要に応じて `curl -I https://gaip.jp/onlinedenpo/idou_maki/` で応答を確認します。キャッシュ対策が必要な場合は HTML/CSS/JS のクエリ文字列を更新します。
