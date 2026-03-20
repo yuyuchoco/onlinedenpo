@@ -6,12 +6,15 @@
 
 このプロジェクトはビルド不要の静的サイトなので、GitHub Pages で公開する方法を採用しています。
 
+- GitHub リポジトリ: https://github.com/yuyuchoco/onlinedenpo
+- 公開 URL: https://yuyuchoco.github.io/onlinedenpo/
+
 ### 手順
 
 1. GitHub に `onlinedenpo` リポジトリを作成する。
 2. このディレクトリを `main` ブランチの内容として push する。
 3. GitHub Pages を `Deploy from a branch` / `main` / `/(root)` で有効化する。
-4. 数分待って公開 URL を確認する。
+4. 公開 URL `https://yuyuchoco.github.io/onlinedenpo/` を確認する。
 
 ### 更新方法
 
