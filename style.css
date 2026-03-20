@@ -1,0 +1,559 @@
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=Yuji+Syuku&family=Zen+Old+Mincho:wght@400;500;700&family=Klee+One:wght@400;600&display=swap');
+
+html {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+:root {
+    --font-mincho: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    --font-rodin: 'FOT-ロダン Pro DB', 'FOT-NewRodin Pro DB', 'Rodin Pro DB', 'Rodin', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    --font-gyosho: 'Yuji Syuku', 'Hiragino Mincho ProN', serif;
+    --font-modern: 'Zen Old Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    --font-elegant: 'Klee One', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    --active-font-family: var(--font-rodin);
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background:
+        radial-gradient(circle at top, rgba(173, 146, 84, 0.2), transparent 38%),
+        linear-gradient(180deg, #2b241d 0%, #120f0c 100%);
+    font-family: var(--active-font-family);
+    overflow: hidden;
+    color: #e8ddc0;
+    overscroll-behavior: none;
+}
+
+body.font-mincho {
+    --active-font-family: var(--font-mincho);
+}
+
+body.font-rodin {
+    --active-font-family: var(--font-rodin);
+}
+
+body.font-gyosho {
+    --active-font-family: var(--font-gyosho);
+}
+
+body.font-modern {
+    --active-font-family: var(--font-modern);
+}
+
+body.font-elegant {
+    --active-font-family: var(--font-elegant);
+}
+
+/* Scene */
+.scene {
+    perspective: 2000px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 2s ease 0.5s;
+    position: relative;
+    touch-action: none; /* Prevent browser scroll/bounce on the scene */
+}
+
+.scene.visible {
+    opacity: 1;
+}
+
+/* Book Container */
+.book {
+    position: relative;
+    /* Responsive sizing for mobile-first */
+    width: 85vw;
+    max-width: 480px;
+    height: 75vh;
+    max-height: 650px;
+    transform: translateX(0);
+    transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1),
+                width 0.6s ease-in-out 0.8s,
+                height 0.6s ease-in-out 0.8s,
+                max-width 0.6s ease-in-out 0.8s,
+                max-height 0.6s ease-in-out 0.8s;
+    transform-style: preserve-3d;
+}
+
+/* After opening: expand to fill the full viewport */
+.book.open {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    transform: none;
+}
+
+@media (min-width: 768px) {
+    .book.open {
+        transform: none;
+    }
+}
+
+/* Each page element */
+.page-wrapper {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+}
+
+/* Left Page (The inner text content) */
+.page-left {
+    background: url('washi.jpg') center/cover, #fdfcf9;
+    background-blend-mode: multiply;
+    box-shadow: inset -10px 0 20px rgba(0,0,0,0.03), inset 0 0 50px rgba(255,255,255,0.8), -10px 10px 20px rgba(0,0,0,0.15);
+    border-radius: 4px 0 0 4px;
+    padding: 8vw 6vw;
+    display: flex;
+    justify-content: flex-end; /* Top/Right origin for vertical text */
+    align-items: flex-start;
+    position: relative;
+    transform-style: flat; /* Prevents children from entering 3D context, fixing iOS touch/click hit-testing */
+    border: 1px solid rgba(0,0,0,0.05);
+    border-right: none;
+    overflow: visible;
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    .page-left {
+        padding: 50px 40px;
+    }
+}
+
+.page-left::before {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0; width: 40px;
+    background: linear-gradient(to left, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+}
+
+/* Full-screen state after opening */
+.book.open .page-left {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.book.open .page-left::before {
+    display: none;
+}
+
+.font-switcher {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 252, 246, 0.9);
+    border: 1px solid rgba(173, 138, 45, 0.25);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    color: #5d4a1e;
+    pointer-events: auto;
+}
+
+.font-switcher-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.font-switcher-select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid rgba(173, 138, 45, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #4e3b12;
+    font: inherit;
+    padding: 8px 14px;
+    min-width: 116px;
+    pointer-events: auto;
+    position: relative;
+    z-index: 31;
+}
+
+@media (max-width: 767px) {
+    .font-switcher {
+        top: 10px;
+        left: 10px;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .font-switcher-label {
+        font-size: 0.68rem;
+    }
+
+    .font-switcher-select {
+        min-width: 96px;
+        padding: 7px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Cover Wrapper */
+.cover-wrapper {
+    transform-origin: right center; /* Hinge on the right edge */
+    transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer;
+    box-shadow: -10px 10px 20px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
+.cover-wrapper:hover {
+    box-shadow: -12px 12px 25px rgba(0,0,0,0.25);
+    transform: rotateY(3deg); /* Hint that it opens */
+}
+
+.cover-wrapper.open {
+    transform: rotateY(175deg); /* Open nearly flat */
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.1);
+    cursor: default;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cover-wrapper.open .cover-face {
+    pointer-events: none;
+}
+
+/* Common Cover Face */
+.cover-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 4px 0 0 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Front Cover Layout */
+.cover-front {
+    background: 
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 28%),
+        linear-gradient(160deg, rgba(8, 8, 8, 0.05), rgba(0, 0, 0, 0.72)),
+        url('black-leather-texture.jpg') center/cover;
+    background-blend-mode: screen, multiply, normal;
+    border: 1px solid rgba(196, 148, 46, 0.9);
+    z-index: 2;
+    box-shadow:
+        inset 0 0 50px rgba(0, 0, 0, 0.45),
+        inset 0 0 18px rgba(212, 175, 55, 0.08);
+}
+
+.cover-front::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px; right: 20px; bottom: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.85);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.12);
+    pointer-events: none;
+}
+
+/* Extra inner border for more gold decoration */
+.cover-front::after {
+    content: '';
+    position: absolute;
+    top: 26px; left: 26px; right: 26px; bottom: 26px;
+    border: 1px solid rgba(111, 85, 20, 0.7);
+    pointer-events: none;
+}
+
+.title-box {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.38));
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(212, 175, 55, 0.8);
+    padding: 8vw 6vw;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.28), inset 0 0 18px rgba(212, 175, 55, 0.12);
+    
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    color: #d9b45b;
+    text-shadow: 0 1px 0 rgba(65, 42, 4, 0.65), 0 0 12px rgba(212, 175, 55, 0.12);
+}
+
+@media (min-width: 768px) {
+    .title-box {
+        padding: 50px 40px;
+    }
+}
+
+.sender-company {
+    font-size: 4vw;
+    letter-spacing: 0.3em;
+    margin-left: 3vw;
+    color: #f1dd9c;
+}
+
+.sender-title {
+    font-size: 3vw;
+    letter-spacing: 0.2em;
+    padding-top: 6vw;
+    margin-left: 3vw;
+    color: #d9b45b;
+}
+
+.sender-name {
+    font-size: 6vw;
+    letter-spacing: 0.4em;
+    font-weight: 400;
+    margin: 0;
+    padding-top: 12vw;
+    color: #f3d480;
+}
+
+@media (min-width: 768px) {
+    .sender-company { font-size: 1.1rem; margin-left: 15px; }
+    .sender-title { font-size: 0.9rem; padding-top: 30px; margin-left: 15px; }
+    .sender-name { font-size: 2rem; padding-top: 60px; }
+}
+
+
+.cover-logo {
+    position: absolute;
+    left: 50%;
+    bottom: 76px;
+    transform: translateX(-50%);
+    width: min(30vw, 150px);
+    height: auto;
+    opacity: 0.95;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.open-instruction {
+    position: absolute;
+    bottom: 30px;
+    background: rgba(212, 175, 55, 0.12);
+    color: #f0d78a;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 3.5vw;
+    letter-spacing: 0.1em;
+    animation: pulse 2.5s infinite ease-in-out;
+    border: 1px solid rgba(212, 175, 55, 0.6);
+    font-weight: 600;
+    box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.12);
+}
+
+@media (min-width: 768px) {
+    .open-instruction {
+        font-size: 0.9rem;
+        bottom: 40px;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Inside Front Cover (Right side when open) */
+.cover-back {
+    background:
+        linear-gradient(180deg, rgba(34, 28, 22, 0.88), rgba(10, 9, 8, 0.92)),
+        url('black-leather-texture.jpg') center/cover;
+    background-blend-mode: multiply;
+    transform: rotateY(180deg);
+    border-radius: 0 4px 4px 0;
+    box-shadow: inset 10px 0 20px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.cover-back::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0; width: 40px;
+    background: linear-gradient(to right, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0) 100%);
+}
+
+.stamp {
+    width: 25vw;
+    height: 25vw;
+    max-width: 140px;
+    max-height: 140px;
+    border: 3px solid rgba(212, 175, 55, 0.72);
+    border-radius: 8px; /* Square stamp */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(241, 221, 156, 0.95);
+    font-size: 8vw;
+    font-weight: 600;
+    margin-bottom: 5vw;
+}
+
+@media (min-width: 768px) {
+    .stamp {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+    }
+}
+
+.stamp-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 3.8vw;
+    line-height: 1.8;
+    color: rgba(232, 214, 163, 0.82);
+    letter-spacing: 0.3em;
+    margin-top: 2vw;
+}
+
+@media (min-width: 768px) {
+    .stamp-text {
+        font-size: 1.1rem;
+        margin-top: 20px;
+    }
+}
+
+.text-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Hide scrollbars, we do custom translate */
+    position: relative;
+    z-index: 1;
+    cursor: default;
+    /* Prevent text selection while dragging */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    overscroll-behavior: none;
+    touch-action: none; /* Crucial for custom touch handling */
+    opacity: 0; /* Hidden until book fully expands */
+}
+
+/* Reveal animation: starts as background expansion finishes (0.8s delay + 0.6s duration = 1.4s) */
+.text-container.show {
+    animation: textReveal 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.4s both;
+}
+
+@keyframes textReveal {
+    0%   { opacity: 0; transform: translateX(30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+.text-container.manual-ready {
+    cursor: grab;
+}
+
+.text-container:active {
+    cursor: grabbing;
+}
+@media (max-width: 767px) {
+    .cover-logo {
+        bottom: 72px;
+        width: min(34vw, 132px);
+    }
+}
+
+/* Main Text Content */
+.vertical-text {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: max-content; /* Allow it to grow as much as needed horizontally */
+    min-width: 100%;
+    height: 100%;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    line-height: 2.2;
+    font-size: 3.8vw;
+    color: #2c3138;
+    font-weight: 400;
+    padding-bottom: 2vw;
+    will-change: transform; /* Hint for GPU hardware acceleration equivalent to WebGL */
+    line-break: strict; /* 日本語禁則処理（行頭・行末禁則文字を自動制御） */
+    overflow-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+    .vertical-text {
+        font-size: 1.15rem;
+        line-height: 2.5;
+        margin-right: 15px;
+        padding-bottom: 10px;
+    }
+}
+
+/* (show class was moved to .text-container for proper animation sequencing) */
+
+/* Hide scrollbar for the vertical text container but keep functionality */
+.vertical-text::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.vertical-text::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+/* Profile Image Styling */
+
+/* 縦書きコンテキスト内で上下中央に配置するための列ラッパー */
+.profile-image-column {
+    display: inline-flex;
+    writing-mode: horizontal-tb; /* 縦書きをリセットして通常の座標系に戻す */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;  /* ← 上下中央配置はここで制御 */
+    height: 100%;             /* 縦書き親要素内での物理的な高さ = 画面の高さ */
+    margin-right: 4vw;        /* テキストとの間隔（水平方向） */
+}
+
+.profile-image-wrapper {
+    display: inline-block;
+    padding: 1vw;
+    background: #fffdf9;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.08);
+    border-radius: 2px;
+}
+
+.profile-image {
+    display: block;
+    width: 50vw; /* ← 表示幅を調整する箇所（画面幅に対する割合） */
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .profile-image-column {
+        margin-right: 20px;
+    }
+    .profile-image-wrapper {
+        padding: 6px;
+    }
+    .profile-image {
+        width: 50vw; /* ← デスクトップでの表示幅を調整する箇所 */
+    }
+}

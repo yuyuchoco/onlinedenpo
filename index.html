@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オンライン電報 | 異動のご挨拶</title>
+    <meta name="description" content="オンラインで贈る特別な二つ折りご挨拶アニメーション。異動や転任のお知らせにお使いいただけます。">
+    <!-- Cache busting parameter appended to css link -->
+    <link rel="stylesheet" href="style.css?v=20260320_reveal2">
+</head>
+<body>
+    <!-- Main Scene -->
+    <div class="scene" id="scene">
+        <div class="book" id="book">
+            <!-- Left Page: The Main Content -->
+            <div class="page-wrapper page-left">
+                <div class="font-switcher" id="font-switcher" hidden>
+                    <label class="font-switcher-label" for="font-select">書体見本</label>
+                    <select id="font-select" class="font-switcher-select">
+                        <option value="mincho">明朝体</option>
+                        <option value="rodin">ロダン</option>
+                        <option value="gyosho">行書</option>
+                        <option value="modern">モダン</option>
+                        <option value="elegant">上品</option>
+                    </select>
+                </div>
+                <div class="text-container" id="text-container">
+                    <div class="vertical-text" id="honbun-text"></div>
+                </div>
+            </div>
+            
+            <!-- Front Cover: Opens slowly -->
+            <div class="page-wrapper cover-wrapper" id="cover">
+                <!-- Outside Cover -->
+                <div class="cover-face cover-front">
+                    <div class="title-box">
+                        <div class="sender-company">レクサス岡崎</div>
+                        <div class="sender-title">ゼネラルマネージャー</div>
+                        <h1 class="sender-name">牧 宏樹</h1>
+                    </div>
+                    <img src="lexus_logo_white.png" alt="LEXUS" class="cover-logo">
+                    <div class="open-instruction" id="open-btn">タップで開く</div>
+                </div>
+                <!-- Inside Cover -->
+                <div class="cover-face cover-back">
+                    <div class="stamp">感謝</div>
+                    <div class="stamp-text">これまでのご厚情に<br>深く感謝申し上げます</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.LOADING_LOGO = 'lexus_logo_white.png';
+    </script>
+    <script src="lexus-loading.js?v=20260320_1"></script>
+    <!-- Cache busting parameter appended to script link -->
+    <script src="script.js?v=20260320_reveal1"></script>
+</body>
+</html>
